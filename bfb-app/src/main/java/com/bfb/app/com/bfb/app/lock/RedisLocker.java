@@ -13,25 +13,31 @@ public class RedisLocker implements DistributedLocker {
 
     @Autowired
     RedissonConnector redissonConnector;
-
+    public RLock  getLock(String resourceName){
+        RedissonClient redisson= redissonConnector.getClient();
+        RLock lock = redisson.getLock(LOCKER_PREFIX + resourceName);
+        return lock;
+    }
     @Override
-    public <T> T lock(String resourceName, AquiredLockWorker<T> worker) throws UnableToAquireLockException, Exception {
-         return lock(resourceName, worker, 100);
+    public <T> T lock(RLock lock, AquiredLockWorker<T> worker) throws UnableToAquireLockException, Exception {
+         return lock(lock, worker, 100);
     }
 
     @Override
-    public <T> T lock(String resourceName, AquiredLockWorker<T> worker, int lockTime) throws UnableToAquireLockException, Exception {
-        RedissonClient redisson= redissonConnector.getClient();
-        RLock lock = redisson.getLock(LOCKER_PREFIX + resourceName);
+    public <T> T lock(RLock lock, AquiredLockWorker<T> worker, int lockTime) throws UnableToAquireLockException, Exception {
+        if(lock==null){
+            throw new UnableToAquireLockException();
+        }
         boolean success = lock.tryLock(100, lockTime, TimeUnit.SECONDS);
         if (success) {
-            try {
                 return worker.invokeAfterLockAquire();
-            } finally {
-                lock.unlock();
-            }
         }
         throw new UnableToAquireLockException();
 
+    }
+    public  void unLock(RLock lock){
+        if(lock!=null){
+            lock.unlock();
+        }
     }
 }
