@@ -24,15 +24,17 @@ public class RedisLocker implements DistributedLocker {
     }
 
     @Override
-    public <T> T lock(RLock lock, AquiredLockWorker<T> worker, int lockTime) throws UnableToAquireLockException, Exception {
+    public <T> T lock(RLock lock, AquiredLockWorker<T> worker, int lockTime)throws UnableToAquireLockException, Exception  {
         if(lock==null){
             throw new UnableToAquireLockException();
         }
-        boolean success = lock.tryLock(100, lockTime, TimeUnit.SECONDS);
-        if (success) {
+
+            if (lock.tryLock()){
                 return worker.invokeAfterLockAquire();
-        }
-        throw new UnableToAquireLockException();
+            }
+            return  worker.invokeAfterLockFail();
+
+
 
     }
     public  void unLock(RLock lock){

@@ -5,4 +5,5 @@ package com.bfb.app.com.bfb.app.lock;
 
 public interface AquiredLockWorker<T> {
     T invokeAfterLockAquire() throws Exception;
+    T invokeAfterLockFail() throws Exception;
 }
