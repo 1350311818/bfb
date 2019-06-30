@@ -1,5 +1,8 @@
 package com.bfb.app.com.bfb.app.controller;
 
+import com.bfb.kafka.Kafka;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +38,10 @@ public class MoviveController {
 //        }finally {
 //            rLock.unlock();
 //        }
+        Kafka kafka = new Kafka();
+        KafkaProducer<String, String>  producer = kafka.getProducer();
+        ProducerRecord<String,String> record = new ProducerRecord<>("topic-demo","hello");
+        producer.send(record);
         return  "test";
     }
 }
