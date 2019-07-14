@@ -17,7 +17,7 @@ public class Kafka<K,V> {
         this.properties = getProperties();
     }
     private  Properties getProperties(){
-        brokeList = ev.getProperty("kafka.brokelist");
+        brokeList = "localhost:9092";
         Properties properties=new Properties();
         properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -30,8 +30,8 @@ public class Kafka<K,V> {
     }
     public KafkaConsumer<K,V> getConsumer(){
         properties.put("group.id","group-demo");
-        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringSerializer");
-        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         KafkaConsumer <K,V> consumer = new KafkaConsumer<K, V>(this.properties);
     return  consumer;
     }
